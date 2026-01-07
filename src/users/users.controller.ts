@@ -1,10 +1,13 @@
-import { Body, Controller, DefaultValuePipe, Get, Headers, Ip, Param, ParseIntPipe, Patch, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, DefaultValuePipe, Get, Headers, Ip, Param, ParseIntPipe, Patch, Post, Query, SetMetadata, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateManyUsersDto } from './dtos/create-many-users.dto';
+import { AccessTokenGuard } from 'src/auth/guards/access-token/access-token.guard';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enums';
 
 @Controller('api/users')
 @ApiTags('Users')
@@ -25,11 +28,14 @@ export class UsersController {
     }
 
     @Post()
+    @Auth(AuthType.None)  //No need for this since the whole route is protected by default
+    @UseInterceptors(ClassSerializerInterceptor)  //activates exclude in entity
     public CreateUsers(@Body() createUserDto: CreateUserDto){
         //console.log(createUserDto);
         return this.usersService.CreateUser(createUserDto);
     }
 
+    //@UseGuards(AccessTokenGuard)
     @Post('create-many')
     public CreateManyUsers(@Body() createManyUsersDto: CreateManyUsersDto){
         return this.usersService.createMany(createManyUsersDto);

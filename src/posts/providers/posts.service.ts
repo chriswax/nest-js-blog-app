@@ -12,6 +12,8 @@ import { GetPostsDto } from "../dtos/get-posts.dto";
 import { take } from "rxjs";
 import { PaginationProvider } from "src/common/pagination/providers/pagination.provider";
 import { Paginated } from "src/common/pagination/interfaces/paginated.interface";
+import { CreatePostProvider } from "./create-post.provider";
+import { ActiveUserData } from "src/auth/interfaces/active-user-data.interface";
 
 @Injectable()
 export class PostsService{
@@ -26,29 +28,16 @@ export class PostsService{
 
         private readonly tagsService: TagsService,
 
-        private readonly paginationProvider: PaginationProvider
+        private readonly paginationProvider: PaginationProvider,
+
+        private readonly createPostProvider: CreatePostProvider,
+
     ){}
 
 
-    public async create(createPostDto: CreatePostDto){
-        let author = await this.usersService.findOneById(createPostDto.authorId);
-        let tags = await this.tagsService.findMultipleTags(createPostDto.tags ?? []);
-
-        // const tags = createPostDto.tags?.length
-        //             ? await this.tagsService.findMultipleTags(createPostDto.tags)
-        //             : [];
-
-        if (!author) {
-            throw new NotFoundException('Author not found');
-        }
-
-        const post = this.postsRepository.create({
-            ...createPostDto,
-            author:author,
-            tags:tags
-        });
-
-        return await this.postsRepository.save(post);
+    public async create(createPostDto: CreatePostDto, user: ActiveUserData){
+        
+        return await this.createPostProvider.create(createPostDto, user);
     }
 
     public async update(patchPostDto: PatchPostDto){

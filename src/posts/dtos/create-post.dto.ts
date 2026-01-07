@@ -130,12 +130,13 @@ export class CreatePostDto{
     @Type(() => CreatePostMetaOptionsDto)
     metaOptions?: CreatePostMetaOptionsDto;
 
-    @ApiProperty({
-        type:"integer",
-        required: true,
-        example: 1,
-    })
-    @IsNotEmpty()
-    @IsInt()
-    authorId: number
+    //not needed again, coming from bearer token
+    // @ApiProperty({
+    //     type:"integer",
+    //     required: true,
+    //     example: 1,
+    // })
+    // @IsNotEmpty()
+    // @IsInt()
+    // authorId: number
 }

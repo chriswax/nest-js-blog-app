@@ -8,6 +8,8 @@ import { SignInProvider } from './providers/sign-in.provider';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { GenerateTokensProvider } from './providers/generate-tokens.provider';
+import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 
 @Module({
   controllers: [AuthController],
@@ -16,7 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
     {
       provide: HashingProvider,    //without this it will give circular dependency issues
       useClass: BcryptProvider,  //with this implementation one can change the abstract implementation to e.g Argon
-    }, SignInProvider
+    }, SignInProvider, GenerateTokensProvider, RefreshTokensProvider
   ],
   imports: [
     forwardRef(()=> UsersModule), 
